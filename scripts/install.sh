@@ -2,7 +2,7 @@
 
 cd ~
 
-git clone https://github.com/morph-zsh/morph-zsh.git .morph-zsh
+git clone https://github.com/MorpheusZero/morph-zsh.git .morph-zsh
 
 echo "MORPH_ZSH_HOME=~/.morph-zsh" >> ~/.zshrc
 
