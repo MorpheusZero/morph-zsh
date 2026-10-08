@@ -8,5 +8,6 @@ if [ -z "$MORPH_ZSH_HOME" ]; then
 fi
 
 # Load plugins (comment out plugins that you don't want to use)
+source $MORPH_ZSH_HOME/plugins/theme-loader.zshrc
 source $MORPH_ZSH_HOME/plugins/fs.zshrc
 source $MORPH_ZSH_HOME/plugins/git.zshrc
