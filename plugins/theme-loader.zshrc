@@ -12,12 +12,19 @@ zstyle ':vcs_info:git*' formats '%b'
 # Define defaults expected by the Agnoster theme
 export DEFAULT_USER=$(whoami)
 
+# If MORPH_ZSH_THEME is set, use it instead of the default theme
+if [ -n "$MORPH_ZSH_THEME" ]; then
+    THEME_FILE="$MORPH_ZSH_HOME/themes/$MORPH_ZSH_THEME.zsh-theme"
+else
+    THEME_FILE="$MORPH_ZSH_HOME/themes/agnoster.zsh-theme"
+fi
+
 # Source the theme script
-if [[ -f $MORPH_ZSH_HOME/themes/agnoster.zsh-theme ]]; then
-    source $MORPH_ZSH_HOME/themes/agnoster.zsh-theme
+if [[ -f $THEME_FILE ]]; then
+    source $THEME_FILE
     # Force the prompt to draw itself on initialization
     precmd() {
         vcs_info
-        print -rn -- "$($prompt_agnoster_main)"
+        print -rn -- "$($prompt_theme_main)"
     }
 fi
