@@ -7,6 +7,9 @@ if [ -z "$MORPH_ZSH_HOME" ]; then
     return 1
 fi
 
+# Set required opts
+setopt prompt_subst
+
 # Load plugins (comment out plugins that you don't want to use)
 source $MORPH_ZSH_HOME/plugins/theme-loader.zshrc
 source $MORPH_ZSH_HOME/plugins/fs.zshrc
