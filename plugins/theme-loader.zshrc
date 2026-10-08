@@ -25,6 +25,5 @@ if [[ -f $THEME_FILE ]]; then
     # Force the prompt to draw itself on initialization
     precmd() {
         vcs_info
-        print -rn -- "$($prompt_theme_main)"
     }
 fi
