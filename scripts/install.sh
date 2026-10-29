@@ -25,6 +25,8 @@ echo "source ~/.morph-zsh/morph.zshrc" >> ~/.zshrc
 echo "source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $MORPH_ZSH_HOME/morph.zshrc
 
 # Setup Herder to load first
+# Add Herdr to path
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> $MORPH_ZSH_HOME/morph.zshrc
 echo '
 if [[ -z "$HERDR_PANE_ID" ]]; then
   herdr 2> /dev/null
