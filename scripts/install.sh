@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Prereqs
 if ! command -v brew &> /dev/null; then
@@ -6,7 +7,8 @@ if ! command -v brew &> /dev/null; then
     exit 1
 fi
 
-cd ~
+MORPH_ZSH_HOME="${HOME}/.morph-zsh"
+ZSHRC="${HOME}/.zshrc"
 
 # Install Herdr
 curl -fsSL https://herdr.dev/install.sh | sh
@@ -15,21 +17,39 @@ curl -fsSL https://herdr.dev/install.sh | sh
 brew install zsh-autosuggestions
 
 # Install MorphZSH
-git clone https://github.com/MorpheusZero/morph-zsh.git .morph-zsh
+if [[ -d "${MORPH_ZSH_HOME}/.git" ]]; then
+    echo "MorphZSH already present at ${MORPH_ZSH_HOME}; skipping clone."
+elif [[ -e "${MORPH_ZSH_HOME}" ]]; then
+    echo "Error: ${MORPH_ZSH_HOME} exists and is not a MorphZSH checkout." >&2
+    exit 1
+else
+    git clone https://github.com/MorpheusZero/morph-zsh.git "${MORPH_ZSH_HOME}"
+fi
 
-echo "MORPH_ZSH_HOME=~/.morph-zsh" >> ~/.zshrc
+append_once() {
+    local file="$1"
+    local line="$2"
+    touch "${file}"
+    grep -qxF "${line}" "${file}" || printf '%s\n' "${line}" >> "${file}"
+}
 
-echo "source ~/.morph-zsh/morph.zshrc" >> ~/.zshrc
+append_once "${ZSHRC}" "MORPH_ZSH_HOME=${MORPH_ZSH_HOME}"
+append_once "${ZSHRC}" "source ${MORPH_ZSH_HOME}/morph.zshrc"
 
 # Load Autosuggestions
-echo "source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $MORPH_ZSH_HOME/morph.zshrc
+AUTOSUGGESTIONS="$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+append_once "${MORPH_ZSH_HOME}/morph.zshrc" "source ${AUTOSUGGESTIONS}"
 
-# Setup Herder to load first
+# Setup Herdr to load first
 # Add Herdr to path
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> $MORPH_ZSH_HOME/morph.zshrc
-echo '
+append_once "${MORPH_ZSH_HOME}/morph.zshrc" 'export PATH="$HOME/.local/bin:$PATH"'
+if ! grep -q 'HERDR_PANE_ID' "${MORPH_ZSH_HOME}/morph.zshrc"; then
+    cat >> "${MORPH_ZSH_HOME}/morph.zshrc" <<'EOF'
+
 if [[ -z "$HERDR_PANE_ID" ]]; then
   herdr 2> /dev/null
-fi' >> $MORPH_ZSH_HOME/morph.zshrc
+fi
+EOF
+fi
 
-echo "Done! Installed at $MORPH_ZSH_HOME. Please restart your terminal to start using MorphZSH."
+echo "Done! Installed at ${MORPH_ZSH_HOME}. Please restart your terminal to start using MorphZSH."
